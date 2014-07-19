@@ -89,7 +89,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://tomycat.github.io/2014/07/20/testmd/" data-id="khuzch2q4vs9go0l" class="article-share-link">Share</a>
+      <a data-url="http://tomycat.github.io/2014/07/20/testmd/" data-id="vy2gzyh00jnhn1tw" class="article-share-link">Share</a>
       
       
     </footer>
@@ -99,10 +99,10 @@
 
 
   
-    <article id="default-2013-10-27-temple-intro" class="article article-type-default" itemscope itemprop="blogPost">
+    <article id="default-learning-clojure-company" class="article article-type-default" itemscope itemprop="blogPost">
   <div class="article-meta">
-    <a href="/2014/07/19/2013-10-27-temple-intro/" class="article-date">
-  <time datetime="2014-07-19T12:18:44.000Z" itemprop="datePublished">7月 19 2014</time>
+    <a href="/2014/07/19/learning-clojure-company/" class="article-date">
+  <time datetime="2014-07-18T16:00:00.000Z" itemprop="datePublished">7月 19 2014</time>
 </a>
     
   </div>
@@ -113,271 +113,7 @@
         
   
     <h1 itemprop="name">
-      <a class="article-title" href="/2014/07/19/2013-10-27-temple-intro/">前端模板引擎Temple简介</a>
-    </h1>
-  
-
-      </header>
-    
-    <div class="article-entry" itemprop="articleBody">
-      
-        <h3 id="Features">Features</h3>
-<ul>
-<li>语法继承自KISSY 1.2 Template ,不过少了个花括号</li>
-<li>编译后的代码非常直观 <a href="http://tomycat.github.io/blog/temple/index.html" target="_blank" rel="external">Temple编译后的代码</a> </li>
-<li>基本的 if/elseif/else each</li>
-<li>include 子模板</li>
-<li>extend 模板继承</li>
-<li>if(exp) exp可以为复杂表达式</li>
-<li>模板允许使用自定义函数</li>
-</ul>
-<h3 id="Getting_Started">Getting Started</h3>
-<pre><code class="javascript">KISSY.use('gallery/temple/1.0/index', function (S, Temple) {
-     Temple.add("base","this is head , my sex is {#block name} female {/block}!");
-     var temple = Temple.compile('{#extend base} {#block name} {sex} {/block}');
-     var html = temple.render({"sex":"male"});
-     console.log(html);
-})</code></pre>
-
-<h3 id="API">API</h3>
-<ul>
-<li><code>Temple.compile</code> 将模板编译为可以直接执行的js函数，返回的对象具有render方法</li>
-<li><code>Temple.to_js</code> 将模板编译为js代码字符串,用于调试或者预编译</li>
-</ul>
-<h3 id="语法示例">语法示例</h3>
-<h4 id="expression_and_variable">expression and variable</h4>
-<pre><code class="javascript">
-var s = '{#if (a+(b-c*d/(ef%3)))}'
-          + 'blah blah {lib}'
-      + '{/if}';
-var temple = Temple.compile(s);
-
-temple.render({a:1,b:2,c:3,d:4,ef:5,lib:"KISSY"});
-// => "blah blah KISSY"
-</code></pre>
-
-<h4 id="if">if</h4>
-<pre><code class="javascript">
-var template = '{#if name}'
-                 + 'hi {name}'
-             + '{/if}'
-
-var temple = Temple.compile(template);
-temple.render({name:"tom"});
-// -> tom
-</code></pre>
-
-<h4 id="if/else">if/else</h4>
-<pre><code class="javascript">
-var template;
-template = '{#if name}'
-             + '{name}'
-         + '{#else}'
-             + 'noname'
-         + '{/if}'
-var temple = Temple.compile(template);
-template.render({name:"tom"});
-</code></pre>
-
-<h4 id="if/elseif/else">if/elseif/else</h4>
-<pre><code class="javascript">
-template = '{#if name}'
-             + '{name}'
-         + '{#elseif sex}'
-             + '{sex}'
-         + '{#else}'
-           + 'oops'
-         + '{/if}'
-var temple = Temple.compile(template);
-temple.render({name:"tom"});
-// => tom
-</code></pre>
-
-<h4 id="each">each</h4>
-<pre><code class="javascript">
- var template =  '{#each items as item index}'
-                   + '{index} : {item.name}'
-               + '{/each}';
-
-var temple = Temple.compile(template);
-
-temple.render({items:[{name:"john"}]});
-// => "0 : john"
-</code></pre>
-
-<h4 id="include">include</h4>
-<pre><code class="javascript">
-Temple.add("head","&lt;h1&gt;共用头&lt;/h1&gt;");
-Temple.add("foot","&lt;h1&gt;共用脚&lt;/h1");
-
-var template = '{#include head}'
-             + '&lt;p&gt;身体是你自己的&lt;/p&gt;'
-             + '{#include foot}';
-var temple = Temple.compile(template);
-temple.render();
-// =&gt; "&lt;h1&gt;共用头&lt;/h1&gt;&lt;p&gt;身体是你自己的&lt;/p&gt;&lt;h1&gt;共用脚&lt;/h1"
-</code></pre>
-
-<h4 id="extend">extend</h4>
-<pre><code class="javascript">
-Temple.add("base","&lt;h1&gt;共用头&lt;/h1&gt;"
-                  + "{#block body}"
-                    + "&lt;p&gt;大家都公用的身体&lt;/p&gt;"
-                  + "{/block}"
-                + "&lt;h1&gt;共用脚&lt;/h1&gt;");
-
-var app = '{#extend base}'
-        + '{#block body}'
-        + '&lt;p&gt;你自己的身体&lt;/p&gt;'
-        + '{/block}';
-
-var temple;
-temple = Temple.compile(app);
-temple.render();
-// =&gt; "&lt;h1&gt;共用头&lt;/h1&gt;&lt;p&gt;你自己的身体&lt;/p&gt;&lt;h1&gt;共用脚&lt;/h1&gt;"
-</code></pre>
-
-<h4 id="custom_function">custom function</h4>
-<pre><code class="javascript">
-Temple.reg("myescape",function(s){
-  return escape(s);
-});
-var temple  = Temple.compile('{myescape(htmlstr)}');
-temple.render({htmlstr:"&lt;p&gt;foo&lt;/p&gt;"});
-// => "%3Cp%3Efoo%3C/p%3E"
-</code></pre>
-
-<h4 id="comment">comment</h4>
-<pre><code class="javascript">
-var temple;
-temple  = Temple.compile('{#!this is a line of comment}');
-temple.render();
-// => ""
-
-temple  = Temple.compile('{#! 可以包含"{"、"#"、"\\}" }');
-temple.render();
-// => ""
-
-temple  = Temple.compile('{#! 中文注释} 中文字符串abc');
-temple.render();
-// => " 中文字符串abc"
-</code></pre>
-
-
-      
-    </div>
-    <footer class="article-footer">
-      <a data-url="http://tomycat.github.io/2014/07/19/2013-10-27-temple-intro/" data-id="ntqmwcnhi81c87q7" class="article-share-link">Share</a>
-      
-      
-  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/javascript/">javascript</a></li></ul>
-
-    </footer>
-  </div>
-  
-</article>
-
-
-  
-    <article id="post-2013-10-26-jekyll-hilightjs" class="article article-type-post" itemscope itemprop="blogPost">
-  <div class="article-meta">
-    <a href="/2014/07/19/2013-10-26-jekyll-hilightjs/" class="article-date">
-  <time datetime="2014-07-19T12:18:44.000Z" itemprop="datePublished">7月 19 2014</time>
-</a>
-    
-  </div>
-  <div class="article-inner">
-    
-    
-    <div class="article-entry" itemprop="articleBody">
-      
-        <hr>
-<p>layout: default<br>tags : other<br>comments : true<br>codesyntax : true</p>
-<h2 id="-_other">- other</h2>
-<h2 id="源码">源码</h2>
-<pre><code class="javascript">
-function hi(){
-  alert("hi , world");
-}
-</code></pre>
-
-      
-    </div>
-    <footer class="article-footer">
-      <a data-url="http://tomycat.github.io/2014/07/19/2013-10-26-jekyll-hilightjs/" data-id="hqhz0mxyuw0em46g" class="article-share-link">Share</a>
-      
-      
-    </footer>
-  </div>
-  
-</article>
-
-
-  
-    <article id="default-2013-10-26-md-syntax" class="article article-type-default" itemscope itemprop="blogPost">
-  <div class="article-meta">
-    <a href="/2014/07/19/2013-10-26-md-syntax/" class="article-date">
-  <time datetime="2014-07-19T12:18:44.000Z" itemprop="datePublished">7月 19 2014</time>
-</a>
-    
-  </div>
-  <div class="article-inner">
-    
-    
-    <div class="article-entry" itemprop="articleBody">
-      
-        <h2 id="语法">语法</h2>
-<p><a href="http://daringfireball.net/projects/markdown/syntax" target="_blank" rel="external">daringfireball</a></p>
-<h2 id="footnote语法">footnote语法</h2>
-<p>只有phpmarkdown支持</p>
-<pre><code class="markdown">
-That's some text with a footnote.[^1]
-
-[^1]: And that's the footnote.
-</code></pre>
-
-<h2 id="table">table</h2>
-<pre><code class="markdown">| 项目        | 价格   |  数量  |
-| --------   | -----:  | :----:  |
-| 计算机     | $1600 |   5     |
-| 手机        |   $12   |   12   |
-| 管线        |    $1    |  234  |
-</code></pre>
-
-
-<h2 id="链接复用">链接复用</h2>
-<p>I get 10 times more traffic from <a href="http://google.com/" title="Google" target="_blank" rel="external">Google</a> than from<br><a href="http://search.yahoo.com/" title="Yahoo Search" target="_blank" rel="external">Yahoo</a> or <a href="http://search.msn.com/" title="MSN Search" target="_blank" rel="external">MSN</a>.</p>
-
-      
-    </div>
-    <footer class="article-footer">
-      <a data-url="http://tomycat.github.io/2014/07/19/2013-10-26-md-syntax/" data-id="lku2o2md7hkza3ij" class="article-share-link">Share</a>
-      
-      
-  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/other/">other</a></li></ul>
-
-    </footer>
-  </div>
-  
-</article>
-
-
-  
-    <article id="default-2014-07-19-learning-clojure-company" class="article article-type-default" itemscope itemprop="blogPost">
-  <div class="article-meta">
-    <a href="/2014/07/19/2014-07-19-learning-clojure-company/" class="article-date">
-  <time datetime="2014-07-19T12:18:44.000Z" itemprop="datePublished">7月 19 2014</time>
-</a>
-    
-  </div>
-  <div class="article-inner">
-    
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/2014/07/19/2014-07-19-learning-clojure-company/">Clojure 的发展情况</a>
+      <a class="article-title" href="/2014/07/19/learning-clojure-company/">Clojure 的发展情况</a>
     </h1>
   
 
@@ -418,7 +154,7 @@ That's some text with a footnote.[^1]
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://tomycat.github.io/2014/07/19/2014-07-19-learning-clojure-company/" data-id="ff2oywmnnl2u2t19" class="article-share-link">Share</a>
+      <a data-url="http://tomycat.github.io/2014/07/19/learning-clojure-company/" data-id="erzhzdg410r7pot5" class="article-share-link">Share</a>
       
       
   <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/clojure/">clojure</a></li></ul>
@@ -430,10 +166,10 @@ That's some text with a footnote.[^1]
 
 
   
-    <article id="default-2014-07-16-learning-clojure-3" class="article article-type-default" itemscope itemprop="blogPost">
+    <article id="default-learning-clojure-3" class="article article-type-default" itemscope itemprop="blogPost">
   <div class="article-meta">
-    <a href="/2014/07/19/2014-07-16-learning-clojure-3/" class="article-date">
-  <time datetime="2014-07-19T12:18:44.000Z" itemprop="datePublished">7月 19 2014</time>
+    <a href="/2014/07/16/learning-clojure-3/" class="article-date">
+  <time datetime="2014-07-15T16:00:00.000Z" itemprop="datePublished">7月 16 2014</time>
 </a>
     
   </div>
@@ -444,7 +180,7 @@ That's some text with a footnote.[^1]
         
   
     <h1 itemprop="name">
-      <a class="article-title" href="/2014/07/19/2014-07-16-learning-clojure-3/">学习 clojure 3 ：《Clojure程序设计》 Clojure 编程入门 - 在 repl 中测试代码</a>
+      <a class="article-title" href="/2014/07/16/learning-clojure-3/">学习 clojure 3 ：《Clojure程序设计》 Clojure 编程入门 - 在 repl 中测试代码</a>
     </h1>
   
 
@@ -472,7 +208,7 @@ That's some text with a footnote.[^1]
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://tomycat.github.io/2014/07/19/2014-07-16-learning-clojure-3/" data-id="0yocrswhviwhehe0" class="article-share-link">Share</a>
+      <a data-url="http://tomycat.github.io/2014/07/16/learning-clojure-3/" data-id="4q77ee9r47r8cji3" class="article-share-link">Share</a>
       
       
   <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/clojure/">clojure</a></li></ul>
@@ -484,10 +220,10 @@ That's some text with a footnote.[^1]
 
 
   
-    <article id="default-2014-07-15-learning-clojure-2" class="article article-type-default" itemscope itemprop="blogPost">
+    <article id="default-learning-clojure-2" class="article article-type-default" itemscope itemprop="blogPost">
   <div class="article-meta">
-    <a href="/2014/07/19/2014-07-15-learning-clojure-2/" class="article-date">
-  <time datetime="2014-07-19T12:18:44.000Z" itemprop="datePublished">7月 19 2014</time>
+    <a href="/2014/07/15/learning-clojure-2/" class="article-date">
+  <time datetime="2014-07-14T16:00:00.000Z" itemprop="datePublished">7月 15 2014</time>
 </a>
     
   </div>
@@ -498,7 +234,7 @@ That's some text with a footnote.[^1]
         
   
     <h1 itemprop="name">
-      <a class="article-title" href="/2014/07/19/2014-07-15-learning-clojure-2/">学习 clojure 2 ： 《Clojure程序设计》 Clojure 简介</a>
+      <a class="article-title" href="/2014/07/15/learning-clojure-2/">学习 clojure 2 ： 《Clojure程序设计》 Clojure 简介</a>
     </h1>
   
 
@@ -577,7 +313,7 @@ That's some text with a footnote.[^1]
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://tomycat.github.io/2014/07/19/2014-07-15-learning-clojure-2/" data-id="q3catm0f4apugy8f" class="article-share-link">Share</a>
+      <a data-url="http://tomycat.github.io/2014/07/15/learning-clojure-2/" data-id="9qs65axpcdq534xb" class="article-share-link">Share</a>
       
       
   <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/clojure/">clojure</a></li></ul>
@@ -589,57 +325,10 @@ That's some text with a footnote.[^1]
 
 
   
-    <article id="post-2014-07-12-ios-dev-first-impression" class="article article-type-post" itemscope itemprop="blogPost">
+    <article id="default-learning-clojure-1" class="article article-type-default" itemscope itemprop="blogPost">
   <div class="article-meta">
-    <a href="/2014/07/19/2014-07-12-ios-dev-first-impression/" class="article-date">
-  <time datetime="2014-07-19T12:18:44.000Z" itemprop="datePublished">7月 19 2014</time>
-</a>
-    
-  </div>
-  <div class="article-inner">
-    
-    
-    <div class="article-entry" itemprop="articleBody">
-      
-        <hr>
-<p>layout: default<br>tags :<br>-cordova<br>-ios<br>comments : true</p>
-<h2 id="title_:_iOS_开发的第一印象">title : iOS 开发的第一印象</h2>
-<p>第一、贵 ，$99 刀换成人民币要 699 圆</p>
-<p>第二、申请流程要填一大堆东西，还有各种申请，要登录各种系统，配置文件（Provisioning Profile） XCode 会代你生成，但是有些又要你自己申请</p>
-<ol>
-<li><p>Certificates xCode 会帮你生成，所以不用操心</p>
-</li>
-<li><p>Identifiers 需要自己申请，申请后，要等一段时间才能生效[3] ，并且注意和 iTunes connect 上的 bunddle id 要对应上</p>
-</li>
-<li><p>Provisioning Profiles 要自己生成</p>
-</li>
-</ol>
-<p>第三、给开发者用的系统挺烂的：访问慢，提示在维护；在后台申请了一个 identities id，XCode 操作老是不成功，原来是这个id没有同步，上网一查，不是个案，要等一天左右才能同步</p>
-<p>第四、开发完了打包发布，发现再怎么都不能 achive ，解决办法是，device不要选择模拟器</p>
-<p>第五、发布时，不断的报错：choose a profile to sign with no identities were available，原因就是第三点里描述的，系统延迟！！而且还要延迟一天左右，见 <a href="http://stackoverflow.com/questions/10215530/no-identities-were-available-administrator-request" target="_blank" rel="external">ref</a></p>
-<p>第六、使用 Webview 真的有点慢，在一个循环里面用了正则表达式测试，就把页面拖的卡死，但是我的这个应用又必须是网页的</p>
-<p><strong>附录</strong></p>
-<p>[1] <a href="http://docs.phonegap.com/en/edge/guide_platforms_ios_index.md.html" target="_blank" rel="external">http://docs.phonegap.com/en/edge/guide_platforms_ios_index.md.html</a></p>
-<p>[2] <a href="http://stackoverflow.com/questions/12825724/applications-must-be-ready-for-upload-on-itunes-connect-before-they-can-be-valid" target="_blank" rel="external">http://stackoverflow.com/questions/12825724/applications-must-be-ready-for-upload-on-itunes-connect-before-they-can-be-valid</a></p>
-<p>[3] <a href="http://anthonytietjen.blogspot.jp/2012/08/overcoming-trouble-validating-your.html" target="_blank" rel="external">http://anthonytietjen.blogspot.jp/2012/08/overcoming-trouble-validating-your.html</a></p>
-
-      
-    </div>
-    <footer class="article-footer">
-      <a data-url="http://tomycat.github.io/2014/07/19/2014-07-12-ios-dev-first-impression/" data-id="cwwl3721f142t1i6" class="article-share-link">Share</a>
-      
-      
-    </footer>
-  </div>
-  
-</article>
-
-
-  
-    <article id="default-2014-07-14-learning-clojure-1" class="article article-type-default" itemscope itemprop="blogPost">
-  <div class="article-meta">
-    <a href="/2014/07/19/2014-07-14-learning-clojure-1/" class="article-date">
-  <time datetime="2014-07-19T12:18:44.000Z" itemprop="datePublished">7月 19 2014</time>
+    <a href="/2014/07/14/learning-clojure-1/" class="article-date">
+  <time datetime="2014-07-13T16:00:00.000Z" itemprop="datePublished">7月 14 2014</time>
 </a>
     
   </div>
@@ -650,7 +339,7 @@ That's some text with a footnote.[^1]
         
   
     <h1 itemprop="name">
-      <a class="article-title" href="/2014/07/19/2014-07-14-learning-clojure-1/">学习 clojure 1：缘起</a>
+      <a class="article-title" href="/2014/07/14/learning-clojure-1/">学习 clojure 1：缘起</a>
     </h1>
   
 
@@ -746,7 +435,7 @@ That's some text with a footnote.[^1]
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://tomycat.github.io/2014/07/19/2014-07-14-learning-clojure-1/" data-id="3pyujke78x5ec4s0" class="article-share-link">Share</a>
+      <a data-url="http://tomycat.github.io/2014/07/14/learning-clojure-1/" data-id="ova0bwb7bjs3no71" class="article-share-link">Share</a>
       
       
   <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/clojure/">clojure</a></li></ul>
@@ -758,10 +447,57 @@ That's some text with a footnote.[^1]
 
 
   
-    <article id="default-2014-07-10-cordova-generator" class="article article-type-default" itemscope itemprop="blogPost">
+    <article id="post-ios-dev-first-impression" class="article article-type-post" itemscope itemprop="blogPost">
   <div class="article-meta">
-    <a href="/2014/07/19/2014-07-10-cordova-generator/" class="article-date">
-  <time datetime="2014-07-19T12:18:44.000Z" itemprop="datePublished">7月 19 2014</time>
+    <a href="/2014/07/12/ios-dev-first-impression/" class="article-date">
+  <time datetime="2014-07-11T16:00:00.000Z" itemprop="datePublished">7月 12 2014</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <hr>
+<p>layout: default<br>tags :<br>-cordova<br>-ios<br>comments : true</p>
+<h2 id="title_:_iOS_开发的第一印象">title : iOS 开发的第一印象</h2>
+<p>第一、贵 ，$99 刀换成人民币要 699 圆</p>
+<p>第二、申请流程要填一大堆东西，还有各种申请，要登录各种系统，配置文件（Provisioning Profile） XCode 会代你生成，但是有些又要你自己申请</p>
+<ol>
+<li><p>Certificates xCode 会帮你生成，所以不用操心</p>
+</li>
+<li><p>Identifiers 需要自己申请，申请后，要等一段时间才能生效[3] ，并且注意和 iTunes connect 上的 bunddle id 要对应上</p>
+</li>
+<li><p>Provisioning Profiles 要自己生成</p>
+</li>
+</ol>
+<p>第三、给开发者用的系统挺烂的：访问慢，提示在维护；在后台申请了一个 identities id，XCode 操作老是不成功，原来是这个id没有同步，上网一查，不是个案，要等一天左右才能同步</p>
+<p>第四、开发完了打包发布，发现再怎么都不能 achive ，解决办法是，device不要选择模拟器</p>
+<p>第五、发布时，不断的报错：choose a profile to sign with no identities were available，原因就是第三点里描述的，系统延迟！！而且还要延迟一天左右，见 <a href="http://stackoverflow.com/questions/10215530/no-identities-were-available-administrator-request" target="_blank" rel="external">ref</a></p>
+<p>第六、使用 Webview 真的有点慢，在一个循环里面用了正则表达式测试，就把页面拖的卡死，但是我的这个应用又必须是网页的</p>
+<p><strong>附录</strong></p>
+<p>[1] <a href="http://docs.phonegap.com/en/edge/guide_platforms_ios_index.md.html" target="_blank" rel="external">http://docs.phonegap.com/en/edge/guide_platforms_ios_index.md.html</a></p>
+<p>[2] <a href="http://stackoverflow.com/questions/12825724/applications-must-be-ready-for-upload-on-itunes-connect-before-they-can-be-valid" target="_blank" rel="external">http://stackoverflow.com/questions/12825724/applications-must-be-ready-for-upload-on-itunes-connect-before-they-can-be-valid</a></p>
+<p>[3] <a href="http://anthonytietjen.blogspot.jp/2012/08/overcoming-trouble-validating-your.html" target="_blank" rel="external">http://anthonytietjen.blogspot.jp/2012/08/overcoming-trouble-validating-your.html</a></p>
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="http://tomycat.github.io/2014/07/12/ios-dev-first-impression/" data-id="1l8wncojgi64fqvw" class="article-share-link">Share</a>
+      
+      
+    </footer>
+  </div>
+  
+</article>
+
+
+  
+    <article id="default-cordova-generator" class="article article-type-default" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/2014/07/10/cordova-generator/" class="article-date">
+  <time datetime="2014-07-09T16:00:00.000Z" itemprop="datePublished">7月 10 2014</time>
 </a>
     
   </div>
@@ -772,7 +508,7 @@ That's some text with a footnote.[^1]
         
   
     <h1 itemprop="name">
-      <a class="article-title" href="/2014/07/19/2014-07-10-cordova-generator/">cordova icon generator</a>
+      <a class="article-title" href="/2014/07/10/cordova-generator/">cordova icon generator</a>
     </h1>
   
 
@@ -794,10 +530,182 @@ That's some text with a footnote.[^1]
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://tomycat.github.io/2014/07/19/2014-07-10-cordova-generator/" data-id="8uwh6x8sv6eqfcff" class="article-share-link">Share</a>
+      <a data-url="http://tomycat.github.io/2014/07/10/cordova-generator/" data-id="ddzpn7st9qdbhzlx" class="article-share-link">Share</a>
       
       
   <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/cordova/">cordova</a></li></ul>
+
+    </footer>
+  </div>
+  
+</article>
+
+
+  
+    <article id="default-hangzhou-zhigu-train" class="article article-type-default" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/2014/06/23/hangzhou-zhigu-train/" class="article-date">
+  <time datetime="2014-06-22T16:00:00.000Z" itemprop="datePublished">6月 23 2014</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/2014/06/23/hangzhou-zhigu-train/">参加智谷创业培训记——如何写商业计划书</a>
+    </h1>
+  
+
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <h2 id="1-_参加过程：">1. 参加过程：</h2>
+<p>周日晚上6:00-8:00参加智谷创业培训——商业计划辅导，我提前一个小时就<br>到了下沙浙江理工大学，夜羽是这所学校毕业的.问了下校园里的同学，比较顺利的找<br>到了 N311 教室，得吃晚饭，于是又出校门找食堂，食堂在校门外宿舍区，我分不清<br>南北，在挺远的一个地方，好难找到。我在1楼买了一个煎饼果子，才￥6。简单吃了<br>又回 N311 教室，就我一个人，5:40了都还没人来，拿出 mac 继续码代码。等到<br>17:50了，我都怀疑自己搞错了，最近老是犯糊涂，买错票，坐错车，来的时候也是做<br>错了地铁，杭州1号线，往下沙那边走有两个方向，在客运站分叉，一个去临平的，还<br>有一个是去哪儿的，我正好坐错了方向，又只好折回来，还好，挺快，没有耽误太多<br>时间。</p>
+<p>我一个人来的，自己坐在那儿孤零零的。于是找周围的人搭讪，都是些小朋友。</p>
+<p>培训会实际上6:30半过了都还没开始，我问那个培训的老师什么时候开始，我说我住<br>在城西，得急着赶回去。结果聊上了，问我是什么项目，我大致说了下，结果在接下<br>来的讲解中，还多次以我的项目为例……</p>
+<h2 id="2-_感受：">2. 感受：</h2>
+<p>这次参加培训的主要是在校大学时居多，并且遇到的几个竟然是大一的……我猜，<br>他们只是想丰富验下生活罢了，创业艰辛</p>
+<h2 id="3-_学到的知识：">3. 学到的知识：</h2>
+<p>讲师说，注册公司非常容易，一周就能搞定；杭州市的创业大赛举办了<br>3年了，无偿给创业团队种子基金，得奖是3w，按讲师的说法是「害了创业团队」；这<br>次是江干区的组织的创业大赛，是第一年举办，得奖是5w；面向在校大学生，感觉有<br>点水，讲师的说法是，现在全国找不到一家直接投钱给大学生的，智谷是第一家，智<br>谷在做「行业投资」，区别于「风险投资」，风险投资方只能通过上市退出，所以要<br>求很严格。</p>
+<h2 id="4-_总结：">4. 总结：</h2>
+<p>参加这次活动最大的意义在于，认识了一群充满梦想的伙伴，创业路上，并不孤单。</p>
+<h2 id="5-_图片">5. 图片</h2>
+<p><img src="/blog/images/2014-06-23-hangzhou-zhigu-train/1.jpg" alt="1.jpg"></p>
+<p><img src="/blog/images/2014-06-23-hangzhou-zhigu-train/2.jpg" alt="2.jpg"></p>
+<p><img src="/blog/images/2014-06-23-hangzhou-zhigu-train/3.jpg" alt="3.jpg"></p>
+<p><img src="/blog/images/2014-06-23-hangzhou-zhigu-train/4.jpg" alt="4.jpg"></p>
+<p><img src="/blog/images/2014-06-23-hangzhou-zhigu-train/5.jpg" alt="5.jpg"></p>
+<p><img src="/blog/images/2014-06-23-hangzhou-zhigu-train/6.jpg" alt="6.jpg"></p>
+<p><img src="/blog/images/2014-06-23-hangzhou-zhigu-train/7.jpg" alt="7.jpg"></p>
+<p><img src="/blog/images/2014-06-23-hangzhou-zhigu-train/8.jpg" alt="8.jpg"></p>
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="http://tomycat.github.io/2014/06/23/hangzhou-zhigu-train/" data-id="wpj112m4yzmvlb68" class="article-share-link">Share</a>
+      
+      
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/startup/">startup</a></li></ul>
+
+    </footer>
+  </div>
+  
+</article>
+
+
+  
+    <article id="default-ios8-is-good-for-hybrid-app-developer" class="article article-type-default" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/2014/06/17/ios8-is-good-for-hybrid-app-developer/" class="article-date">
+  <time datetime="2014-06-16T16:00:00.000Z" itemprop="datePublished">6月 17 2014</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/2014/06/17/ios8-is-good-for-hybrid-app-developer/">iOS 8 发布对Hybrid app有什么影响？</a>
+    </h1>
+  
+
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p>iOS 8 正式发布后，基于 UIWebView 的 Hybrid app 性能有望获得大幅提升.</p>
+<h3 id="webview_使用了和_safari_javascript_引擎">webview 使用了和 safari javascript 引擎</h3>
+<p>Hybrid app 是基于 UIWebView 的应用，比如 Phonegap/cordova 最终会将 html/js/css 打<br>包运行在 UIWebView 中。而在 iOS 8 之前，处于安全的考虑[1]，只有 Safari 开启了 JavaScriptCore  just-in-time (JIT) 技术，实时的将 javascript 编译为机器码。使用了 JIT 技术有什么影响呢？js的计算能力有 200% - 300% 的提升，见下图 [2] —— 注意是js计算能力，对于非计算密集型的，比如游戏之外的项目，可能性能提升不是那么明显，比如参考[3]提到了一个 Todo MVC 的应用，经他的测试也有 20% 左右的提升.</p>
+<p><img src="/blog/images/2014-06-17-ios8-is-good-for-hybrid-app-developer/Chrome_for_iOS_SunSpider.jpg" alt="ios_chrome"></p>
+<p><img src="/blog/images/2014-06-17-ios8-is-good-for-hybrid-app-developer/iOS_Safari_SunSpider.jpg" alt="ios_safari"></p>
+<h3 id="需要_Hybrid_应应用框架_Phonegap/cordova_跟进">需要 Hybrid 应应用框架 Phonegap/cordova 跟进</h3>
+<p>iOS 8 发布了，如果开发者的应用依赖像 Phonegap/cordova 这样的第三方框架，是不能立马享受到带来的好处的，需要 Phonegap/cordova 从 UIWebView 迁移到 WKWebView API. 不过，网络上还没有看到 cordova 跟进的消息，本身 iOS 的正式发布也要等一段时间，拭目以待吧.</p>
+<h3 id="参考">参考</h3>
+<p>[1] <a href="http://www.cnet.com/news/ios-8-grants-new-power-to-rival-browsers-web-based-apps/" target="_blank" rel="external">http://www.cnet.com/news/ios-8-grants-new-power-to-rival-browsers-web-based-apps/</a>  One possible reason was security: a JIT compiler essentially creates a new program on the fly and marks the region of memory it’s stored in as executable, and a hacker could potentially abuse that privilege.</p>
+<p>[2] <a href="http://developer.telerik.com/featured/why-ios-8s-wkwebview-is-a-big-deal-for-hybrid-development/" target="_blank" rel="external">http://developer.telerik.com/featured/why-ios-8s-wkwebview-is-a-big-deal-for-hybrid-development/</a></p>
+<pre><code><span class="label">http:</span>//developer<span class="preprocessor">.telerik</span><span class="preprocessor">.com</span>/wp-content/uploads/<span class="number">2014</span>/<span class="number">06</span>/Chrome_for_iOS_SunSpider<span class="preprocessor">.jpg</span>
+
+<span class="label">http:</span>//developer<span class="preprocessor">.telerik</span><span class="preprocessor">.com</span>/wp-content/uploads/<span class="number">2014</span>/<span class="number">06</span>/iOS_Safari_SunSpider<span class="preprocessor">.jpg</span>
+</code></pre><p>[3] <a href="http://developer.telerik.com/featured/why-ios-8s-wkwebview-is-a-big-deal-for-hybrid-development/" target="_blank" rel="external">http://developer.telerik.com/featured/why-ios-8s-wkwebview-is-a-big-deal-for-hybrid-development/</a></p>
+<p>[4] <a href="http://www.minemobile.com/nitro-javascript-engine-in-ios-phonegap-apps/" target="_blank" rel="external">http://www.minemobile.com/nitro-javascript-engine-in-ios-phonegap-apps/</a></p>
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="http://tomycat.github.io/2014/06/17/ios8-is-good-for-hybrid-app-developer/" data-id="aecoz02ouziikexg" class="article-share-link">Share</a>
+      
+      
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/cordova/">cordova</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/phonegap/">phonegap</a></li></ul>
+
+    </footer>
+  </div>
+  
+</article>
+
+
+  
+    <article id="default-mongodb-note" class="article article-type-default" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/2014/06/04/mongodb-note/" class="article-date">
+  <time datetime="2014-06-03T16:00:00.000Z" itemprop="datePublished">6月 4 2014</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/2014/06/04/mongodb-note/">mongodb 的笔记</a>
+    </h1>
+  
+
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <h3 id="1-_mongodb_的连接数问题">1. mongodb 的连接数问题</h3>
+<p>每次接受一个请求，打开数据库，然后将其关闭。像下面这样：</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div></pre></td><td class="code"><pre><div class="line">app.get(<span class="string">'/detail/:id'</span>,<span class="function"><span class="keyword">function</span><span class="params">(req,res)</span>{</span></div><div class="line">  MongoClient.connect(<span class="string">'mongodb://127.0.0.1:27017/test'</span>, <span class="function"><span class="keyword">function</span><span class="params">(err, db)</span> {</span></div><div class="line">    db.findOne({_id:ObjectId(req.params.id)},<span class="function"><span class="keyword">function</span><span class="params">(err,result)</span>{</span></div><div class="line">      <span class="comment">// do sth</span></div><div class="line">      db.close()</div><div class="line">    })</div><div class="line">  });  </div><div class="line">})</div></pre></td></tr></table></figure>
+
+<p>直觉有点浪费，每次 request 都重新建立 db connection，用完后又关掉，对于高并发的应用来说，尤其浪费。</p>
+<p>所以，更好的方式是复用db connection，以下代码摘自 mongodb node native 官方例子：</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">var</span> express = <span class="built_in">require</span>(<span class="string">'express'</span>);</div><div class="line"><span class="keyword">var</span> mongodb = <span class="built_in">require</span>(<span class="string">'mongodb'</span>);</div><div class="line"><span class="keyword">var</span> app = express();</div><div class="line"></div><div class="line"><span class="keyword">var</span> MongoClient = <span class="built_in">require</span>(<span class="string">'mongodb'</span>).MongoClient;</div><div class="line"><span class="keyword">var</span> db;</div><div class="line"></div><div class="line"><span class="comment">// Initialize connection once</span></div><div class="line">MongoClient.connect(<span class="string">"mongodb://localhost:27017/integration_test"</span>, <span class="function"><span class="keyword">function</span><span class="params">(err, database)</span> {</span></div><div class="line">  <span class="keyword">if</span>(err) <span class="keyword">throw</span> err;</div><div class="line"></div><div class="line">  db = database;</div><div class="line"></div><div class="line">  <span class="comment">// Start the application after the database connection is ready</span></div><div class="line">  app.listen(<span class="number">3000</span>);</div><div class="line">  console.log(<span class="string">"Listening on port 3000"</span>);</div><div class="line">});</div><div class="line"></div><div class="line"><span class="comment">// Reuse database object in request handlers</span></div><div class="line">app.get(<span class="string">"/"</span>, <span class="function"><span class="keyword">function</span><span class="params">(req, res)</span> {</span></div><div class="line">  db.collection(<span class="string">"replicaset_mongo_client_collection"</span>).find({}, <span class="function"><span class="keyword">function</span><span class="params">(err, docs)</span> {</span></div><div class="line">    docs.each(<span class="function"><span class="keyword">function</span><span class="params">(err, doc)</span> {</span></div><div class="line">      <span class="keyword">if</span>(doc) {</div><div class="line">        console.log(doc);</div><div class="line">      }<span class="keyword">else</span> {</div><div class="line">        res.end();</div><div class="line">      }</div><div class="line">    });</div><div class="line">  });</div><div class="line">});</div></pre></td></tr></table></figure><br>应用初始化时，就建立一个 db 实例，以后所有的连接，都是使用这个 db connection。<br><br>并且，通过上面方式建立的 db connection 单独的连接，而是 connection pool，非常高效。<br><br><blockquote><br>You open do MongoClient.connect once when your app boots up and reuse the db object. It’s not a singleton connection pool each .connect creates a new connection pool. [4]<br></blockquote><br><br>更进一步，API 还提供了 maxPoolSize 选项，设置连接池的最大值，默认为 5 <a href="http://mongodb.github.io/node-mongodb-native/driver-articles/mongoclient.html" target="_blank" rel="external">http://mongodb.github.io/node-mongodb-native/driver-articles/mongoclient.html</a><br><br>### 2. mongodb 连接失败导致 node crash<br><br>见 stackoverflow 上的问题 How to ensure Node.js keeps running after MonogBD connection drops? [1]，如何让 Node.js 在数据库挂掉后继续跑？ 目前没有特别好的解决方案。<br><br>首先描述下问题，创建一个 mongodb client：<br><br><figure class="highlight javascript"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line">MongoClient.connect(<span class="string">'mongodb://127.0.0.1:27017/test'</span>, <span class="function"><span class="keyword">function</span><span class="params">(err, db)</span> {</span></div><div class="line"><span class="comment">// do sth</span></div><div class="line">});</div></pre></td></tr></table></figure>
+
+<p>当db连接断掉后（可以手动kill掉mongod进程来模拟复现当掉的情况），再访问 web 服务，就会出现下面类似的出错：</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line"><span class="built_in">Error</span>: failed to connect to [localhost:<span class="number">27017</span>]</div></pre></td></tr></table></figure>
+
+<p>这时候web服务也宕掉了……</p>
+<p>理想的情况是，希望出现一个 500 内部错误提示界面，或者提示在升级什么的，但是数据库连接断掉以后，（我猜测）是 throw 了一个 Error 出来，导致 Node 的主进程挂掉了</p>
+<p>其中一个解决方案是，将数据库的连接操作放在 domain 中。</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">var</span> d = <span class="built_in">require</span>(<span class="string">'domain'</span>).create();</div><div class="line"></div><div class="line">d.on(<span class="string">'error'</span>, <span class="function"><span class="keyword">function</span><span class="params">(er)</span> {</span></div><div class="line">  console.log(<span class="string">'Oh no, something wrong with DB'</span>);</div><div class="line">});</div><div class="line"></div><div class="line">d.run(<span class="function"><span class="keyword">function</span><span class="params">()</span> {</span></div><div class="line">  <span class="comment">// 这里使用的是 mongoose</span></div><div class="line">  mongoose.connect(config.db, options);</div><div class="line">});</div></pre></td></tr></table></figure>
+
+<p>domain 的介绍见 文档 <a href="http://nodejs.org/api/domain.html，" target="_blank" rel="external">http://nodejs.org/api/domain.html，</a> 不过，有点要注意就是 domain 还不够稳定 ，文档标注的是 <code>unstable</code>，<br>不过，附录[1] 说已经用于生产环境中了，并且没有发现啥问题。</p>
+<h3 id="3-_总结：数据库连接可以复用；为保证数据库挂掉后，Node-js_主进程仍然继续跑，可以将数据可的连接操作放到_domain_模块中">3. 总结：数据库连接可以复用；为保证数据库挂掉后，Node.js 主进程仍然继续跑，可以将数据可的连接操作放到 <code>domain</code> 模块中</h3>
+<h3 id="4-_附录：mongolab_上的一篇博文_Deep_Dive_into_Connection_Pooling_[3]">4. 附录：mongolab 上的一篇博文 Deep Dive into Connection Pooling [3]</h3>
+<h3 id="参考">参考</h3>
+<p>[1] <a href="http://stackoverflow.com/questions/20689768/how-to-ensure-node-js-keeps-running-after-monogbd-connection-drops/20690008#20690008" target="_blank" rel="external">http://stackoverflow.com/questions/20689768/how-to-ensure-node-js-keeps-running-after-monogbd-connection-drops/20690008#20690008</a></p>
+<p>[2] <a href="http://stackoverflow.com/questions/10656574/how-to-manage-mongodb-connections-in-a-nodejs-webapp" target="_blank" rel="external">http://stackoverflow.com/questions/10656574/how-to-manage-mongodb-connections-in-a-nodejs-webapp</a></p>
+<p>[3] <a href="http://blog.mongolab.com/2013/11/deep-dive-into-connection-pooling/" target="_blank" rel="external">http://blog.mongolab.com/2013/11/deep-dive-into-connection-pooling/</a> 介绍两种数据库连接方式，一种复用（好），一种不复用（坏）         </p>
+<p>[4] <a href="https://groups.google.com/forum/#!msg/node-mongodb-native/mSGnnuG8C1o/Hiaqvdu1bWoJ" target="_blank" rel="external">https://groups.google.com/forum/#!msg/node-mongodb-native/mSGnnuG8C1o/Hiaqvdu1bWoJ</a></p>
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="http://tomycat.github.io/2014/06/04/mongodb-note/" data-id="4b8usrn231pjmor5" class="article-share-link">Share</a>
+      
+      
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/mongodb/">mongodb</a></li></ul>
 
     </footer>
   </div>
@@ -839,7 +747,7 @@ That's some text with a footnote.[^1]
   <div class="widget-wrap">
     <h3 class="widget-title">Archives</h3>
     <div class="widget">
-      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2014/07">七月 2014</a><span class="archive-list-count">24</span></li></ul>
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2014/07">七月 2014</a><span class="archive-list-count">7</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2014/06">六月 2014</a><span class="archive-list-count">5</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2014/05">五月 2014</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2013/12">十二月 2013</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2013/11">十一月 2013</a><span class="archive-list-count">5</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2013/10">十月 2013</a><span class="archive-list-count">4</span></li></ul>
     </div>
   </div>
 
@@ -855,19 +763,19 @@ That's some text with a footnote.[^1]
           </li>
         
           <li>
-            <a href="/2014/07/19/2013-10-27-temple-intro/">前端模板引擎Temple简介</a>
+            <a href="/2014/07/19/learning-clojure-company/">Clojure 的发展情况</a>
           </li>
         
           <li>
-            <a href="/2014/07/19/2013-10-26-jekyll-hilightjs/">(no title)</a>
+            <a href="/2014/07/16/learning-clojure-3/">学习 clojure 3 ：《Clojure程序设计》 Clojure 编程入门 - 在 repl 中测试代码</a>
           </li>
         
           <li>
-            <a href="/2014/07/19/2013-10-26-md-syntax/">(no title)</a>
+            <a href="/2014/07/15/learning-clojure-2/">学习 clojure 2 ： 《Clojure程序设计》 Clojure 简介</a>
           </li>
         
           <li>
-            <a href="/2014/07/19/2014-07-19-learning-clojure-company/">Clojure 的发展情况</a>
+            <a href="/2014/07/14/learning-clojure-1/">学习 clojure 1：缘起</a>
           </li>
         
       </ul>

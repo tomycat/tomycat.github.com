@@ -89,7 +89,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://tomycat.github.io/2014/07/20/testmd/" data-id="khuzch2q4vs9go0l" class="article-share-link">Share</a>
+      <a data-url="http://tomycat.github.io/2014/07/20/testmd/" data-id="vy2gzyh00jnhn1tw" class="article-share-link">Share</a>
       
       
     </footer>
@@ -99,10 +99,10 @@
 
 
   
-    <article id="default-2013-10-27-temple-intro" class="article article-type-default" itemscope itemprop="blogPost">
+    <article id="default-learning-clojure-company" class="article article-type-default" itemscope itemprop="blogPost">
   <div class="article-meta">
-    <a href="/2014/07/19/2013-10-27-temple-intro/" class="article-date">
-  <time datetime="2014-07-19T12:18:44.000Z" itemprop="datePublished">7月 19 2014</time>
+    <a href="/2014/07/19/learning-clojure-company/" class="article-date">
+  <time datetime="2014-07-18T16:00:00.000Z" itemprop="datePublished">7月 19 2014</time>
 </a>
     
   </div>
@@ -113,271 +113,7 @@
         
   
     <h1 itemprop="name">
-      <a class="article-title" href="/2014/07/19/2013-10-27-temple-intro/">前端模板引擎Temple简介</a>
-    </h1>
-  
-
-      </header>
-    
-    <div class="article-entry" itemprop="articleBody">
-      
-        <h3 id="Features">Features</h3>
-<ul>
-<li>语法继承自KISSY 1.2 Template ,不过少了个花括号</li>
-<li>编译后的代码非常直观 <a href="http://tomycat.github.io/blog/temple/index.html" target="_blank" rel="external">Temple编译后的代码</a> </li>
-<li>基本的 if/elseif/else each</li>
-<li>include 子模板</li>
-<li>extend 模板继承</li>
-<li>if(exp) exp可以为复杂表达式</li>
-<li>模板允许使用自定义函数</li>
-</ul>
-<h3 id="Getting_Started">Getting Started</h3>
-<pre><code class="javascript">KISSY.use('gallery/temple/1.0/index', function (S, Temple) {
-     Temple.add("base","this is head , my sex is {#block name} female {/block}!");
-     var temple = Temple.compile('{#extend base} {#block name} {sex} {/block}');
-     var html = temple.render({"sex":"male"});
-     console.log(html);
-})</code></pre>
-
-<h3 id="API">API</h3>
-<ul>
-<li><code>Temple.compile</code> 将模板编译为可以直接执行的js函数，返回的对象具有render方法</li>
-<li><code>Temple.to_js</code> 将模板编译为js代码字符串,用于调试或者预编译</li>
-</ul>
-<h3 id="语法示例">语法示例</h3>
-<h4 id="expression_and_variable">expression and variable</h4>
-<pre><code class="javascript">
-var s = '{#if (a+(b-c*d/(ef%3)))}'
-          + 'blah blah {lib}'
-      + '{/if}';
-var temple = Temple.compile(s);
-
-temple.render({a:1,b:2,c:3,d:4,ef:5,lib:"KISSY"});
-// => "blah blah KISSY"
-</code></pre>
-
-<h4 id="if">if</h4>
-<pre><code class="javascript">
-var template = '{#if name}'
-                 + 'hi {name}'
-             + '{/if}'
-
-var temple = Temple.compile(template);
-temple.render({name:"tom"});
-// -> tom
-</code></pre>
-
-<h4 id="if/else">if/else</h4>
-<pre><code class="javascript">
-var template;
-template = '{#if name}'
-             + '{name}'
-         + '{#else}'
-             + 'noname'
-         + '{/if}'
-var temple = Temple.compile(template);
-template.render({name:"tom"});
-</code></pre>
-
-<h4 id="if/elseif/else">if/elseif/else</h4>
-<pre><code class="javascript">
-template = '{#if name}'
-             + '{name}'
-         + '{#elseif sex}'
-             + '{sex}'
-         + '{#else}'
-           + 'oops'
-         + '{/if}'
-var temple = Temple.compile(template);
-temple.render({name:"tom"});
-// => tom
-</code></pre>
-
-<h4 id="each">each</h4>
-<pre><code class="javascript">
- var template =  '{#each items as item index}'
-                   + '{index} : {item.name}'
-               + '{/each}';
-
-var temple = Temple.compile(template);
-
-temple.render({items:[{name:"john"}]});
-// => "0 : john"
-</code></pre>
-
-<h4 id="include">include</h4>
-<pre><code class="javascript">
-Temple.add("head","&lt;h1&gt;共用头&lt;/h1&gt;");
-Temple.add("foot","&lt;h1&gt;共用脚&lt;/h1");
-
-var template = '{#include head}'
-             + '&lt;p&gt;身体是你自己的&lt;/p&gt;'
-             + '{#include foot}';
-var temple = Temple.compile(template);
-temple.render();
-// =&gt; "&lt;h1&gt;共用头&lt;/h1&gt;&lt;p&gt;身体是你自己的&lt;/p&gt;&lt;h1&gt;共用脚&lt;/h1"
-</code></pre>
-
-<h4 id="extend">extend</h4>
-<pre><code class="javascript">
-Temple.add("base","&lt;h1&gt;共用头&lt;/h1&gt;"
-                  + "{#block body}"
-                    + "&lt;p&gt;大家都公用的身体&lt;/p&gt;"
-                  + "{/block}"
-                + "&lt;h1&gt;共用脚&lt;/h1&gt;");
-
-var app = '{#extend base}'
-        + '{#block body}'
-        + '&lt;p&gt;你自己的身体&lt;/p&gt;'
-        + '{/block}';
-
-var temple;
-temple = Temple.compile(app);
-temple.render();
-// =&gt; "&lt;h1&gt;共用头&lt;/h1&gt;&lt;p&gt;你自己的身体&lt;/p&gt;&lt;h1&gt;共用脚&lt;/h1&gt;"
-</code></pre>
-
-<h4 id="custom_function">custom function</h4>
-<pre><code class="javascript">
-Temple.reg("myescape",function(s){
-  return escape(s);
-});
-var temple  = Temple.compile('{myescape(htmlstr)}');
-temple.render({htmlstr:"&lt;p&gt;foo&lt;/p&gt;"});
-// => "%3Cp%3Efoo%3C/p%3E"
-</code></pre>
-
-<h4 id="comment">comment</h4>
-<pre><code class="javascript">
-var temple;
-temple  = Temple.compile('{#!this is a line of comment}');
-temple.render();
-// => ""
-
-temple  = Temple.compile('{#! 可以包含"{"、"#"、"\\}" }');
-temple.render();
-// => ""
-
-temple  = Temple.compile('{#! 中文注释} 中文字符串abc');
-temple.render();
-// => " 中文字符串abc"
-</code></pre>
-
-
-      
-    </div>
-    <footer class="article-footer">
-      <a data-url="http://tomycat.github.io/2014/07/19/2013-10-27-temple-intro/" data-id="ntqmwcnhi81c87q7" class="article-share-link">Share</a>
-      
-      
-  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/javascript/">javascript</a></li></ul>
-
-    </footer>
-  </div>
-  
-</article>
-
-
-  
-    <article id="post-2013-10-26-jekyll-hilightjs" class="article article-type-post" itemscope itemprop="blogPost">
-  <div class="article-meta">
-    <a href="/2014/07/19/2013-10-26-jekyll-hilightjs/" class="article-date">
-  <time datetime="2014-07-19T12:18:44.000Z" itemprop="datePublished">7月 19 2014</time>
-</a>
-    
-  </div>
-  <div class="article-inner">
-    
-    
-    <div class="article-entry" itemprop="articleBody">
-      
-        <hr>
-<p>layout: default<br>tags : other<br>comments : true<br>codesyntax : true</p>
-<h2 id="-_other">- other</h2>
-<h2 id="源码">源码</h2>
-<pre><code class="javascript">
-function hi(){
-  alert("hi , world");
-}
-</code></pre>
-
-      
-    </div>
-    <footer class="article-footer">
-      <a data-url="http://tomycat.github.io/2014/07/19/2013-10-26-jekyll-hilightjs/" data-id="hqhz0mxyuw0em46g" class="article-share-link">Share</a>
-      
-      
-    </footer>
-  </div>
-  
-</article>
-
-
-  
-    <article id="default-2013-10-26-md-syntax" class="article article-type-default" itemscope itemprop="blogPost">
-  <div class="article-meta">
-    <a href="/2014/07/19/2013-10-26-md-syntax/" class="article-date">
-  <time datetime="2014-07-19T12:18:44.000Z" itemprop="datePublished">7月 19 2014</time>
-</a>
-    
-  </div>
-  <div class="article-inner">
-    
-    
-    <div class="article-entry" itemprop="articleBody">
-      
-        <h2 id="语法">语法</h2>
-<p><a href="http://daringfireball.net/projects/markdown/syntax" target="_blank" rel="external">daringfireball</a></p>
-<h2 id="footnote语法">footnote语法</h2>
-<p>只有phpmarkdown支持</p>
-<pre><code class="markdown">
-That's some text with a footnote.[^1]
-
-[^1]: And that's the footnote.
-</code></pre>
-
-<h2 id="table">table</h2>
-<pre><code class="markdown">| 项目        | 价格   |  数量  |
-| --------   | -----:  | :----:  |
-| 计算机     | $1600 |   5     |
-| 手机        |   $12   |   12   |
-| 管线        |    $1    |  234  |
-</code></pre>
-
-
-<h2 id="链接复用">链接复用</h2>
-<p>I get 10 times more traffic from <a href="http://google.com/" title="Google" target="_blank" rel="external">Google</a> than from<br><a href="http://search.yahoo.com/" title="Yahoo Search" target="_blank" rel="external">Yahoo</a> or <a href="http://search.msn.com/" title="MSN Search" target="_blank" rel="external">MSN</a>.</p>
-
-      
-    </div>
-    <footer class="article-footer">
-      <a data-url="http://tomycat.github.io/2014/07/19/2013-10-26-md-syntax/" data-id="lku2o2md7hkza3ij" class="article-share-link">Share</a>
-      
-      
-  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/other/">other</a></li></ul>
-
-    </footer>
-  </div>
-  
-</article>
-
-
-  
-    <article id="default-2014-07-19-learning-clojure-company" class="article article-type-default" itemscope itemprop="blogPost">
-  <div class="article-meta">
-    <a href="/2014/07/19/2014-07-19-learning-clojure-company/" class="article-date">
-  <time datetime="2014-07-19T12:18:44.000Z" itemprop="datePublished">7月 19 2014</time>
-</a>
-    
-  </div>
-  <div class="article-inner">
-    
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/2014/07/19/2014-07-19-learning-clojure-company/">Clojure 的发展情况</a>
+      <a class="article-title" href="/2014/07/19/learning-clojure-company/">Clojure 的发展情况</a>
     </h1>
   
 
@@ -418,7 +154,7 @@ That's some text with a footnote.[^1]
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://tomycat.github.io/2014/07/19/2014-07-19-learning-clojure-company/" data-id="ff2oywmnnl2u2t19" class="article-share-link">Share</a>
+      <a data-url="http://tomycat.github.io/2014/07/19/learning-clojure-company/" data-id="erzhzdg410r7pot5" class="article-share-link">Share</a>
       
       
   <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/clojure/">clojure</a></li></ul>
@@ -430,10 +166,10 @@ That's some text with a footnote.[^1]
 
 
   
-    <article id="default-2014-07-16-learning-clojure-3" class="article article-type-default" itemscope itemprop="blogPost">
+    <article id="default-learning-clojure-3" class="article article-type-default" itemscope itemprop="blogPost">
   <div class="article-meta">
-    <a href="/2014/07/19/2014-07-16-learning-clojure-3/" class="article-date">
-  <time datetime="2014-07-19T12:18:44.000Z" itemprop="datePublished">7月 19 2014</time>
+    <a href="/2014/07/16/learning-clojure-3/" class="article-date">
+  <time datetime="2014-07-15T16:00:00.000Z" itemprop="datePublished">7月 16 2014</time>
 </a>
     
   </div>
@@ -444,7 +180,7 @@ That's some text with a footnote.[^1]
         
   
     <h1 itemprop="name">
-      <a class="article-title" href="/2014/07/19/2014-07-16-learning-clojure-3/">学习 clojure 3 ：《Clojure程序设计》 Clojure 编程入门 - 在 repl 中测试代码</a>
+      <a class="article-title" href="/2014/07/16/learning-clojure-3/">学习 clojure 3 ：《Clojure程序设计》 Clojure 编程入门 - 在 repl 中测试代码</a>
     </h1>
   
 
@@ -472,7 +208,7 @@ That's some text with a footnote.[^1]
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://tomycat.github.io/2014/07/19/2014-07-16-learning-clojure-3/" data-id="0yocrswhviwhehe0" class="article-share-link">Share</a>
+      <a data-url="http://tomycat.github.io/2014/07/16/learning-clojure-3/" data-id="4q77ee9r47r8cji3" class="article-share-link">Share</a>
       
       
   <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/clojure/">clojure</a></li></ul>
@@ -484,10 +220,10 @@ That's some text with a footnote.[^1]
 
 
   
-    <article id="default-2014-07-15-learning-clojure-2" class="article article-type-default" itemscope itemprop="blogPost">
+    <article id="default-learning-clojure-2" class="article article-type-default" itemscope itemprop="blogPost">
   <div class="article-meta">
-    <a href="/2014/07/19/2014-07-15-learning-clojure-2/" class="article-date">
-  <time datetime="2014-07-19T12:18:44.000Z" itemprop="datePublished">7月 19 2014</time>
+    <a href="/2014/07/15/learning-clojure-2/" class="article-date">
+  <time datetime="2014-07-14T16:00:00.000Z" itemprop="datePublished">7月 15 2014</time>
 </a>
     
   </div>
@@ -498,7 +234,7 @@ That's some text with a footnote.[^1]
         
   
     <h1 itemprop="name">
-      <a class="article-title" href="/2014/07/19/2014-07-15-learning-clojure-2/">学习 clojure 2 ： 《Clojure程序设计》 Clojure 简介</a>
+      <a class="article-title" href="/2014/07/15/learning-clojure-2/">学习 clojure 2 ： 《Clojure程序设计》 Clojure 简介</a>
     </h1>
   
 
@@ -577,7 +313,7 @@ That's some text with a footnote.[^1]
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://tomycat.github.io/2014/07/19/2014-07-15-learning-clojure-2/" data-id="q3catm0f4apugy8f" class="article-share-link">Share</a>
+      <a data-url="http://tomycat.github.io/2014/07/15/learning-clojure-2/" data-id="9qs65axpcdq534xb" class="article-share-link">Share</a>
       
       
   <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/clojure/">clojure</a></li></ul>
@@ -589,57 +325,10 @@ That's some text with a footnote.[^1]
 
 
   
-    <article id="post-2014-07-12-ios-dev-first-impression" class="article article-type-post" itemscope itemprop="blogPost">
+    <article id="default-learning-clojure-1" class="article article-type-default" itemscope itemprop="blogPost">
   <div class="article-meta">
-    <a href="/2014/07/19/2014-07-12-ios-dev-first-impression/" class="article-date">
-  <time datetime="2014-07-19T12:18:44.000Z" itemprop="datePublished">7月 19 2014</time>
-</a>
-    
-  </div>
-  <div class="article-inner">
-    
-    
-    <div class="article-entry" itemprop="articleBody">
-      
-        <hr>
-<p>layout: default<br>tags :<br>-cordova<br>-ios<br>comments : true</p>
-<h2 id="title_:_iOS_开发的第一印象">title : iOS 开发的第一印象</h2>
-<p>第一、贵 ，$99 刀换成人民币要 699 圆</p>
-<p>第二、申请流程要填一大堆东西，还有各种申请，要登录各种系统，配置文件（Provisioning Profile） XCode 会代你生成，但是有些又要你自己申请</p>
-<ol>
-<li><p>Certificates xCode 会帮你生成，所以不用操心</p>
-</li>
-<li><p>Identifiers 需要自己申请，申请后，要等一段时间才能生效[3] ，并且注意和 iTunes connect 上的 bunddle id 要对应上</p>
-</li>
-<li><p>Provisioning Profiles 要自己生成</p>
-</li>
-</ol>
-<p>第三、给开发者用的系统挺烂的：访问慢，提示在维护；在后台申请了一个 identities id，XCode 操作老是不成功，原来是这个id没有同步，上网一查，不是个案，要等一天左右才能同步</p>
-<p>第四、开发完了打包发布，发现再怎么都不能 achive ，解决办法是，device不要选择模拟器</p>
-<p>第五、发布时，不断的报错：choose a profile to sign with no identities were available，原因就是第三点里描述的，系统延迟！！而且还要延迟一天左右，见 <a href="http://stackoverflow.com/questions/10215530/no-identities-were-available-administrator-request" target="_blank" rel="external">ref</a></p>
-<p>第六、使用 Webview 真的有点慢，在一个循环里面用了正则表达式测试，就把页面拖的卡死，但是我的这个应用又必须是网页的</p>
-<p><strong>附录</strong></p>
-<p>[1] <a href="http://docs.phonegap.com/en/edge/guide_platforms_ios_index.md.html" target="_blank" rel="external">http://docs.phonegap.com/en/edge/guide_platforms_ios_index.md.html</a></p>
-<p>[2] <a href="http://stackoverflow.com/questions/12825724/applications-must-be-ready-for-upload-on-itunes-connect-before-they-can-be-valid" target="_blank" rel="external">http://stackoverflow.com/questions/12825724/applications-must-be-ready-for-upload-on-itunes-connect-before-they-can-be-valid</a></p>
-<p>[3] <a href="http://anthonytietjen.blogspot.jp/2012/08/overcoming-trouble-validating-your.html" target="_blank" rel="external">http://anthonytietjen.blogspot.jp/2012/08/overcoming-trouble-validating-your.html</a></p>
-
-      
-    </div>
-    <footer class="article-footer">
-      <a data-url="http://tomycat.github.io/2014/07/19/2014-07-12-ios-dev-first-impression/" data-id="cwwl3721f142t1i6" class="article-share-link">Share</a>
-      
-      
-    </footer>
-  </div>
-  
-</article>
-
-
-  
-    <article id="default-2014-07-14-learning-clojure-1" class="article article-type-default" itemscope itemprop="blogPost">
-  <div class="article-meta">
-    <a href="/2014/07/19/2014-07-14-learning-clojure-1/" class="article-date">
-  <time datetime="2014-07-19T12:18:44.000Z" itemprop="datePublished">7月 19 2014</time>
+    <a href="/2014/07/14/learning-clojure-1/" class="article-date">
+  <time datetime="2014-07-13T16:00:00.000Z" itemprop="datePublished">7月 14 2014</time>
 </a>
     
   </div>
@@ -650,7 +339,7 @@ That's some text with a footnote.[^1]
         
   
     <h1 itemprop="name">
-      <a class="article-title" href="/2014/07/19/2014-07-14-learning-clojure-1/">学习 clojure 1：缘起</a>
+      <a class="article-title" href="/2014/07/14/learning-clojure-1/">学习 clojure 1：缘起</a>
     </h1>
   
 
@@ -746,7 +435,7 @@ That's some text with a footnote.[^1]
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://tomycat.github.io/2014/07/19/2014-07-14-learning-clojure-1/" data-id="3pyujke78x5ec4s0" class="article-share-link">Share</a>
+      <a data-url="http://tomycat.github.io/2014/07/14/learning-clojure-1/" data-id="ova0bwb7bjs3no71" class="article-share-link">Share</a>
       
       
   <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/clojure/">clojure</a></li></ul>
@@ -758,10 +447,57 @@ That's some text with a footnote.[^1]
 
 
   
-    <article id="default-2014-07-10-cordova-generator" class="article article-type-default" itemscope itemprop="blogPost">
+    <article id="post-ios-dev-first-impression" class="article article-type-post" itemscope itemprop="blogPost">
   <div class="article-meta">
-    <a href="/2014/07/19/2014-07-10-cordova-generator/" class="article-date">
-  <time datetime="2014-07-19T12:18:44.000Z" itemprop="datePublished">7月 19 2014</time>
+    <a href="/2014/07/12/ios-dev-first-impression/" class="article-date">
+  <time datetime="2014-07-11T16:00:00.000Z" itemprop="datePublished">7月 12 2014</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <hr>
+<p>layout: default<br>tags :<br>-cordova<br>-ios<br>comments : true</p>
+<h2 id="title_:_iOS_开发的第一印象">title : iOS 开发的第一印象</h2>
+<p>第一、贵 ，$99 刀换成人民币要 699 圆</p>
+<p>第二、申请流程要填一大堆东西，还有各种申请，要登录各种系统，配置文件（Provisioning Profile） XCode 会代你生成，但是有些又要你自己申请</p>
+<ol>
+<li><p>Certificates xCode 会帮你生成，所以不用操心</p>
+</li>
+<li><p>Identifiers 需要自己申请，申请后，要等一段时间才能生效[3] ，并且注意和 iTunes connect 上的 bunddle id 要对应上</p>
+</li>
+<li><p>Provisioning Profiles 要自己生成</p>
+</li>
+</ol>
+<p>第三、给开发者用的系统挺烂的：访问慢，提示在维护；在后台申请了一个 identities id，XCode 操作老是不成功，原来是这个id没有同步，上网一查，不是个案，要等一天左右才能同步</p>
+<p>第四、开发完了打包发布，发现再怎么都不能 achive ，解决办法是，device不要选择模拟器</p>
+<p>第五、发布时，不断的报错：choose a profile to sign with no identities were available，原因就是第三点里描述的，系统延迟！！而且还要延迟一天左右，见 <a href="http://stackoverflow.com/questions/10215530/no-identities-were-available-administrator-request" target="_blank" rel="external">ref</a></p>
+<p>第六、使用 Webview 真的有点慢，在一个循环里面用了正则表达式测试，就把页面拖的卡死，但是我的这个应用又必须是网页的</p>
+<p><strong>附录</strong></p>
+<p>[1] <a href="http://docs.phonegap.com/en/edge/guide_platforms_ios_index.md.html" target="_blank" rel="external">http://docs.phonegap.com/en/edge/guide_platforms_ios_index.md.html</a></p>
+<p>[2] <a href="http://stackoverflow.com/questions/12825724/applications-must-be-ready-for-upload-on-itunes-connect-before-they-can-be-valid" target="_blank" rel="external">http://stackoverflow.com/questions/12825724/applications-must-be-ready-for-upload-on-itunes-connect-before-they-can-be-valid</a></p>
+<p>[3] <a href="http://anthonytietjen.blogspot.jp/2012/08/overcoming-trouble-validating-your.html" target="_blank" rel="external">http://anthonytietjen.blogspot.jp/2012/08/overcoming-trouble-validating-your.html</a></p>
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="http://tomycat.github.io/2014/07/12/ios-dev-first-impression/" data-id="1l8wncojgi64fqvw" class="article-share-link">Share</a>
+      
+      
+    </footer>
+  </div>
+  
+</article>
+
+
+  
+    <article id="default-cordova-generator" class="article article-type-default" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/2014/07/10/cordova-generator/" class="article-date">
+  <time datetime="2014-07-09T16:00:00.000Z" itemprop="datePublished">7月 10 2014</time>
 </a>
     
   </div>
@@ -772,7 +508,7 @@ That's some text with a footnote.[^1]
         
   
     <h1 itemprop="name">
-      <a class="article-title" href="/2014/07/19/2014-07-10-cordova-generator/">cordova icon generator</a>
+      <a class="article-title" href="/2014/07/10/cordova-generator/">cordova icon generator</a>
     </h1>
   
 
@@ -794,7 +530,7 @@ That's some text with a footnote.[^1]
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://tomycat.github.io/2014/07/19/2014-07-10-cordova-generator/" data-id="8uwh6x8sv6eqfcff" class="article-share-link">Share</a>
+      <a data-url="http://tomycat.github.io/2014/07/10/cordova-generator/" data-id="ddzpn7st9qdbhzlx" class="article-share-link">Share</a>
       
       
   <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/cordova/">cordova</a></li></ul>
@@ -806,10 +542,6 @@ That's some text with a footnote.[^1]
 
 
   
-  
-    <nav id="page-nav">
-      <span class="page-number current">1</span><a class="page-number" href="/archives/2014/07/page/2/">2</a><a class="page-number" href="/archives/2014/07/page/3/">3</a><a class="extend next" rel="next" href="/archives/2014/07/page/2/">Next &raquo;</a>
-    </nav>
   
 </section>
         
@@ -839,7 +571,7 @@ That's some text with a footnote.[^1]
   <div class="widget-wrap">
     <h3 class="widget-title">Archives</h3>
     <div class="widget">
-      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2014/07">七月 2014</a><span class="archive-list-count">24</span></li></ul>
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2014/07">七月 2014</a><span class="archive-list-count">7</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2014/06">六月 2014</a><span class="archive-list-count">5</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2014/05">五月 2014</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2013/12">十二月 2013</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2013/11">十一月 2013</a><span class="archive-list-count">5</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2013/10">十月 2013</a><span class="archive-list-count">4</span></li></ul>
     </div>
   </div>
 
@@ -855,19 +587,19 @@ That's some text with a footnote.[^1]
           </li>
         
           <li>
-            <a href="/2014/07/19/2013-10-27-temple-intro/">前端模板引擎Temple简介</a>
+            <a href="/2014/07/19/learning-clojure-company/">Clojure 的发展情况</a>
           </li>
         
           <li>
-            <a href="/2014/07/19/2013-10-26-jekyll-hilightjs/">(no title)</a>
+            <a href="/2014/07/16/learning-clojure-3/">学习 clojure 3 ：《Clojure程序设计》 Clojure 编程入门 - 在 repl 中测试代码</a>
           </li>
         
           <li>
-            <a href="/2014/07/19/2013-10-26-md-syntax/">(no title)</a>
+            <a href="/2014/07/15/learning-clojure-2/">学习 clojure 2 ： 《Clojure程序设计》 Clojure 简介</a>
           </li>
         
           <li>
-            <a href="/2014/07/19/2014-07-19-learning-clojure-company/">Clojure 的发展情况</a>
+            <a href="/2014/07/14/learning-clojure-1/">学习 clojure 1：缘起</a>
           </li>
         
       </ul>
